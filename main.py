@@ -5,7 +5,20 @@ import pandas as pd
 import os
 
 app = FastAPI()
+# Obtener la ruta de la carpeta donde vive este archivo main.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Unir la carpeta con el nombre del archivo pkl
+componentes_path = os.path.join(BASE_DIR, 'componentes_binarios.pkl')
+
+# Cargar usando la ruta dinámica absoluta
+componentes = joblib.load(componentes_path)
+
+# En lugar de cargar dos archivos, cargamos el diccionario completo que tienes
+componentes = joblib.load("componentes_binarios.pkl")
+modelo = componentes['modelo_binario']
+scaler = componentes['escalador_binario']
+variables_lasso = componentes['variables_lasso_bin']
 # En lugar de cargar dos archivos, cargamos el diccionario completo que tienes
 componentes = joblib.load("componentes_binarios.pkl")
 modelo = componentes['modelo_binario']
