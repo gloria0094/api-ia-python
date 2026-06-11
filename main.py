@@ -6,16 +6,8 @@ import os
 
 app = FastAPI()
 
-# --- FORZAR DIRECTORIO DE TRABAJO ---
-# Esto obliga al sistema a pararse exactamente en la carpeta del script
-directorio_actual = os.path.dirname(os.path.abspath(__file__))
-os.chdir(directorio_actual)
-
-# Ahora Python buscará "componentes_binarios.pkl" exactamente en esa carpeta, sin importar lo que diga Render
-componentes_path = "componentes_binarios.pkl"
-componentes = joblib.load(componentes_path)
-
-# Extraer componentes
+# En lugar de cargar dos archivos, cargamos el diccionario completo que tienes
+componentes = joblib.load("componentes_binarios.pkl")
 modelo = componentes['modelo_binario']
 scaler = componentes['escalador_binario']
 variables_lasso = componentes['variables_lasso_bin']
@@ -59,6 +51,7 @@ def predict_exoplanet(data: ExoplanetInput):
     df_input = pd.DataFrame([data.dict()])
     columnas_originales = scaler.feature_names_in_
     df_reindexed = df_input.reindex(columns=columnas_originales, fill_value=0)
+
 
     # Procesar con los componentes cargados
     X_escalado = scaler.transform(df_reindexed)
