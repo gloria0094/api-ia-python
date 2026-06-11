@@ -2,11 +2,18 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import joblib
 import pandas as pd
+import os
 
 app = FastAPI()
 
-# En lugar de cargar dos archivos, cargamos el diccionario completo que tienes
-componentes = joblib.load("componentes_binarios.pkl")
+# 1. Detectar la carpeta exacta donde está guardado este archivo main.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# CORREGIDO: Usamos os.path.join para que encuentre el archivo en el servidor de Render
+componentes_path = os.path.join(BASE_DIR, "componentes_binarios.pkl")
+componentes = joblib.load(componentes_path)
+
+# Extraer los elementos del diccionario cargado de forma segura
 modelo = componentes['modelo_binario']
 scaler = componentes['escalador_binario']
 variables_lasso = componentes['variables_lasso_bin']
@@ -50,7 +57,6 @@ def predict_exoplanet(data: ExoplanetInput):
     df_input = pd.DataFrame([data.dict()])
     columnas_originales = scaler.feature_names_in_
     df_reindexed = df_input.reindex(columns=columnas_originales, fill_value=0)
-
 
     # Procesar con los componentes cargados
     X_escalado = scaler.transform(df_reindexed)
