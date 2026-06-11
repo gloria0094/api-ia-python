@@ -6,20 +6,16 @@ import os
 
 app = FastAPI()
 
-# Definir rutas absolutas explícitas para Local (Windows) y Producción (Render/Linux)
-RUTA_LOCAL = "componentes_binarios.pkl"
-RUTA_RENDER = "/opt/render/project/src/api-ia-python/componentes_binarios.pkl"
+# --- FORZAR DIRECTORIO DE TRABAJO ---
+# Esto obliga al sistema a pararse exactamente en la carpeta del script
+directorio_actual = os.path.dirname(os.path.abspath(__file__))
+os.chdir(directorio_actual)
 
-# Elige automáticamente cuál ruta usar dependiendo de dónde se está ejecutando el código
-if os.path.exists(RUTA_RENDER):
-    componentes_path = RUTA_RENDER
-else:
-    componentes_path = RUTA_LOCAL
-
-# Cargar el diccionario usando la ruta correcta
+# Ahora Python buscará "componentes_binarios.pkl" exactamente en esa carpeta, sin importar lo que diga Render
+componentes_path = "componentes_binarios.pkl"
 componentes = joblib.load(componentes_path)
 
-# Extraer los elementos del diccionario
+# Extraer componentes
 modelo = componentes['modelo_binario']
 scaler = componentes['escalador_binario']
 variables_lasso = componentes['variables_lasso_bin']
